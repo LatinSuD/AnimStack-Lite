@@ -6,12 +6,13 @@ Based on [tshatrov's AnimStack](https://tshatrov.github.io/animstack) plugin, th
 ## Currently implemented features
 - [fg] and [bg] effects
 - Layer Limits for those effects
+- Flatten Layer Groups function (although Gimp 3 implements it natively)
 
 ## Examples and tutorial
 - Put a layer named `my_background[bg]` at the botton of your layers and run script in order to make it the background for every other layer.
 - Put a layer named `my_overlay[fg]` at the top of your layers and run script in order to overlay that layer on top of every other layer.
 - Put a layer named `my_overlay[fg:5]` and run script in order to overlay that layer on top of 5 layers below it.
-- Don't forget to combine all layer groups at the end (Gimp 3 can do this natively).
+- Don't forget to combine all layer groups at the end.
 
 You can hopefully run the first part of this video also with AnimStack-Lite:
 

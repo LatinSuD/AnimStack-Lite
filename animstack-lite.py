@@ -19,29 +19,48 @@ class OutlineSimple(Gimp.PlugIn):
     
     ## GimpPlugIn virtual methods ##
     def do_query_procedures(self):
-        return ['animstack-lite']
+        return ['animstack-lite', 'flatten-layer-groups']
 
-    # Register the procedure at load time
+    # Register the procedures at load time
     def do_create_procedure(self, name):
-        procedure = Gimp.ImageProcedure.new(self, name,
-                                           Gimp.PDBProcType.PLUGIN,
-                                           self.run, None)
+        if name == 'animstack-lite':
+            procedure = Gimp.ImageProcedure.new(self, name,
+                                            Gimp.PDBProcType.PLUGIN,
+                                            self.run_animstack, None)
+            
+            procedure.set_image_types("*")
+            procedure.set_menu_label("AnimStack Lite")
+            procedure.add_menu_path('<Image>/Filters/Animation')
+            
+            procedure.set_documentation("Processes AnimStack Lite tags",
+                                    ".",
+                                    name)
+            procedure.set_attribution("LatinSuD",
+                                    "MIT License",
+                                    "2026")
+            
+            return procedure
+        elif name == 'flatten-layer-groups':
+            procedure = Gimp.ImageProcedure.new(self, name,
+                                            Gimp.PDBProcType.PLUGIN,
+                                            self.run_flatten, None)
+            
+            procedure.set_image_types("*")
+            procedure.set_menu_label("Flatten Layer Groups")
+            procedure.add_menu_path('<Image>/Filters/Animation')
+            
+            procedure.set_documentation("Flatten Layer Groups",
+                                    ".",
+                                    name)
+            procedure.set_attribution("LatinSuD",
+                                    "MIT License",
+                                    "2026")
+            
+            return procedure
         
-        procedure.set_image_types("*")
-        procedure.set_menu_label("AnimStack Lite")
-        procedure.add_menu_path('<Image>/Filters/Animation')
-        
-        procedure.set_documentation("Processes AnimStack Lite tags",
-                                   ".",
-                                   name)
-        procedure.set_attribution("LatinSuD",
-                                 "MIT License",
-                                 "2026")
-        
-        return procedure
 
     # Actually run the plugin
-    def run(self, procedure, run_mode, image, drawables, config, run_data):
+    def run_animstack(self, procedure, run_mode, image, drawables, config, run_data):
         import re
                 
         # Start undo group
@@ -155,6 +174,32 @@ class OutlineSimple(Gimp.PlugIn):
             for l in active:
                 image.remove_layer(l["layer"])
             
+        except Exception as e:
+            image.undo_group_end()
+            error = GLib.Error.new_literal(Gimp.PlugIn.error_quark(), 
+                                          f"Error: {str(e)}", 0)
+            return procedure.new_return_values(Gimp.PDBStatusType.EXECUTION_ERROR, error)
+        
+        image.undo_group_end()
+        Gimp.displays_flush()
+        
+        return procedure.new_return_values(Gimp.PDBStatusType.SUCCESS, GLib.Error())
+
+
+    # Run Flatten Layer Groups
+    def run_flatten(self, procedure, run_mode, image, drawables, config, run_data):
+                
+        # Start undo group
+        image.undo_group_start()
+      
+        try:
+            procedure = Gimp.get_pdb().lookup_procedure('gimp-group-layer-merge')
+            layers = image.get_layers()
+            for layer in layers:
+                if layer.is_group():
+                    config = procedure.create_config()
+                    config.set_property('group-layer', layer)
+                    result = procedure.run(config)
         except Exception as e:
             image.undo_group_end()
             error = GLib.Error.new_literal(Gimp.PlugIn.error_quark(), 

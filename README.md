@@ -1,5 +1,5 @@
 # AnimStack-Lite
-A simplified version of AnimStack for Gimp 3. It allows to add overlays or backgrounds to multiple layers (frames of an animation).
+Animation tools for Gimp 3. It allows to add overlays or backgrounds to multiple existing layers (frames of an animation).
 
 Based on [tshatrov's AnimStack](https://tshatrov.github.io/animstack) plugin, this version is written in Python and is compatible with Gimp 3.
 

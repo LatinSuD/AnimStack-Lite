@@ -13,3 +13,5 @@ Examples:
 - Put a layer named `my_overlay[fg:5]` and run script in order to overlay that layer on top of 5 layers below it.
 - Don't forget to combine all layer groups at the end (Gimp 3 can do this natively).
 
+You can hopefully run the first tutorial of this video also with AnimStack-Lite:
+https://www.youtube.com/watch?v=lHKx0g8xEl4

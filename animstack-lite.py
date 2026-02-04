@@ -57,7 +57,9 @@ class OutlineSimple(Gimp.PlugIn):
                                     "2026")
             
             return procedure
-        
+
+    def do_set_i18n (self, name):
+        return False        
 
     # Actually run the plugin
     def run_animstack(self, procedure, run_mode, image, drawables, config, run_data):
